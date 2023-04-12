@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <style>
+      .image-grid {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        margin: -10px 0 0 -10px;
+      }
+      .image-card {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #f6f6f6;
+        border-radius: 5px;
+        overflow: hidden;
+        box-shadow: 0px 0px 5px #777;
+        width: 200px;
+        height: 200px;
+        margin: 10px 0 0 10px;
+      }
+      .image-card img {
+        display: block;
+        max-width: 100%;
+        height: auto;
+        cursor: pointer;
+      }
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        padding-top: 50px;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.9);
+      }
+      .modal-content {
+        margin: auto;
+        display: block;
+        width: 80%;
+        max-width: 1200px;
+        max-height: 80vh;
+      }
+      .modal-content img {
+        display: block;
+        margin: auto;
+        max-width: 100%;
+        max-height: 100%;
+      }
+      .close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 40px;
+        font-weight: bold;
+        color: white;
+        cursor: pointer;
+      }
+      .form-container {
+        width: 50%;
+        margin: 20px auto;
+        text-align: center;
+      }
+      .form-container label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: bold;
+      }
+      .form-container input[type="text"] {
+        box-sizing: border-box;
+        padding: 10px;
+        width: 100%;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        font-size: 16px;
+      }
+      .form-container button {
+        display: block;
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: white;
+        border-radius: 5px;
+        font-size: 16px;
+        margin: 0 auto;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="form-container">
+      <label for="folderId">Webフォトアルバム</label>
+      <input type="text" id="folderId" placeholder="フォルダIDを入力">
+      <a href="https://script.google.com/macros/s/AKfycbw87aBd8v0X0tapE0UfP_gKDMgHltaDmg7kXetke8eM6kLfVsJFFF39AtbgHMf8f-7BUA/exec">画像追加はこちらから</a><br>
+      <button onclick="getImages()">送信</button>
+    </div>
+
+
+    <div class="image-grid" id="images"></div>
+
+    <div class="modal" id="modal">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <img class="modal-content" id="modal-image">
+    </div>
+
+    <script>
+      function getImages() {
+        var folderId = document.getElementById("folderId").value;
+        google.script.run.withSuccessHandler(showImages).getFolderImages(folderId);
+      }
+
+      function showImages(imageUrls) {
+        var imagesElem = document.getElementById("images");
+        imagesElem.innerHTML = "";
+        for (var i = 0; i < imageUrls.length; i++) {
+          var imageElem = document.createElement("div");
+          imageElem.classList.add("image-card");
+          var img = document.createElement("img");
+          img.setAttribute("src", imageUrls[i]);
+          img.style.maxWidth = "100%";
+          img.style.maxHeight = "100%";
+          img.addEventListener("click", function() {
+            showModal(this.src);
+          });
+          imageElem.appendChild(img);
+          imagesElem.appendChild(imageElem);
+        }
+      }
+
+      function handleFolderTypeChange() {
+        const folderType = document.getElementById("folderType").value;
+        if (folderType === "newFolder") {
+          document.getElementById("newFolderFields").style.display = "block";
+          document.getElementById("existingFolderFields").style.display = "none";
+        } else {
+          document.getElementById("newFolderFields").style.display = "none";
+          document.getElementById("existingFolderFields").style.display = "block";
+        }
+      }
+
+      function showModal(src) {
+        var modal = document.getElementById("modal");
+        var modalImg = document.getElementById("modal-image");
+        modal.style.display = "block";
+        modalImg.src = src;
+      }
+
+      function closeModal() {
+        var modal = document.getElementById("modal");
+        modal.style.display = "none";
+      }
+    </script>
+  </body>
+</html>
