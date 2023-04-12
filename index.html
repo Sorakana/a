@@ -89,16 +89,35 @@
         margin: 0 auto;
         cursor: pointer;
       }
+      #folderType {
+        display: block;
+        margin: 0 auto;
+        text-align: center;
+      }
     </style>
   </head>
   <body>
-    <div class="form-container">
-      <label for="folderId">Webフォトアルバム</label>
-      <input type="text" id="folderId" placeholder="フォルダIDを入力">
+
+    <h2 style="text-align: center">Webフォトアルバム</h2>
+    <select id="folderType" style="text-align: center" onchange="handleFolderTypeChange()">
+      <option value="" selected hidden>アルバム参照方法</option>
+      <option value="newFolder">新しいアルバムを作成する</option>
+      <option value="existingFolder">既存のアルバムを参照する</option>
+    </select><br><br>
+
+    <div id="old" class="form-container" hidden>
+      <label for="folderId">既存のアルバムを参照する</label>
+      <input type="text" id="folderId" placeholder="アルバムIDを入力">
       <a href="https://script.google.com/macros/s/AKfycbw87aBd8v0X0tapE0UfP_gKDMgHltaDmg7kXetke8eM6kLfVsJFFF39AtbgHMf8f-7BUA/exec">画像追加はこちらから</a><br>
-      <button onclick="getImages()">送信</button>
+      <button onclick="getImages()">開く</button>
     </div>
 
+    <div id="new" class="form-container" hidden>
+      <label for="folderName">新規アルバムを作成する</label>
+      <input type="text" id="folderName" placeholder="アルバム名を入力">
+      <a href="https://script.google.com/macros/s/AKfycbw87aBd8v0X0tapE0UfP_gKDMgHltaDmg7kXetke8eM6kLfVsJFFF39AtbgHMf8f-7BUA/exec">画像追加はこちらから</a><br>
+      <button onclick="getImages()">新規作成</button>
+    </div>
 
     <div class="image-grid" id="images"></div>
 
@@ -132,13 +151,16 @@
       }
 
       function handleFolderTypeChange() {
+        const new2 = document.getElementById("new");
+        const old = document.getElementById("old");
         const folderType = document.getElementById("folderType").value;
+
         if (folderType === "newFolder") {
-          document.getElementById("newFolderFields").style.display = "block";
-          document.getElementById("existingFolderFields").style.display = "none";
+            old.setAttribute("hidden", "hidden");
+            new2.removeAttribute("hidden");
         } else {
-          document.getElementById("newFolderFields").style.display = "none";
-          document.getElementById("existingFolderFields").style.display = "block";
+            new2.setAttribute("hidden", "hidden");
+            old.removeAttribute("hidden");
         }
       }
 
